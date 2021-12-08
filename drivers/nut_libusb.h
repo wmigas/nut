@@ -35,10 +35,10 @@
 #include "usb-common.h"	/* for USBDevice_t and USBDeviceMatcher_t */
 
 /* libusb header file */
-#ifdef WITH_LIBUSB_1_0
+#if WITH_LIBUSB_1_0
 #include <libusb.h>
 #endif
-#ifdef WITH_LIBUSB_0_1
+#if WITH_LIBUSB_0_1
 #include <usb.h>
 /* simple remap to avoid bloating structures */
 typedef usb_dev_handle libusb_device_handle;
