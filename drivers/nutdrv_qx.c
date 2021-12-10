@@ -1274,7 +1274,7 @@ static int	fuji_command(const char *cmd, char *buf, size_t buflen)
 	upsdebug_hex(4, "command", (char *)tmp, 8);
 
 	/* Write data */
-	ret = usb_interrupt_write(udev, USB_ENDPOINT_OUT | 2, (char *)tmp, 8, USB_TIMEOUT);
+	ret = usb_interrupt_write(udev, USB_ENDPOINT_OUT | 2, (const usb_ctrl_char)tmp, 8, USB_TIMEOUT);
 
 	if (ret <= 0) {
 		upsdebugx(3, "send: %s (%d)",
