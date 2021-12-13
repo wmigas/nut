@@ -49,20 +49,26 @@ extern upsdrv_info_t comm_upsdrv_info;
  */
 typedef struct usb_communication_subdriver_s {
 	const char *name;				/* name of this subdriver		*/
-	const char *version;				/* version of this subdriver		*/
+	const char *version;			/* version of this subdriver		*/
+
 	int (*open)(libusb_device_handle **sdevp,	/* try to open the next available	*/
 		USBDevice_t *curDevice,		/* device matching USBDeviceMatcher_t	*/
 		USBDeviceMatcher_t *matcher,
 		int (*callback)(libusb_device_handle *udev, USBDevice_t *hd, unsigned char *rdbuf, int rdlen));
+
 	void (*close)(libusb_device_handle *sdev);
+
 	int (*get_report)(libusb_device_handle *sdev, int ReportId,
-	unsigned char *raw_buf, int ReportSize );
+		unsigned char *raw_buf, int ReportSize );
+
 	int (*set_report)(libusb_device_handle *sdev, int ReportId,
-	unsigned char *raw_buf, int ReportSize );
+		unsigned char *raw_buf, int ReportSize );
+
 	int (*get_string)(libusb_device_handle *sdev,
-	int StringIdx, char *buf, size_t buflen);
+		int StringIdx, char *buf, size_t buflen);
+
 	int (*get_interrupt)(libusb_device_handle *sdev,
-	unsigned char *buf, int bufsize, int timeout);
+		unsigned char *buf, int bufsize, int timeout);
 
 	/* Used for Powervar UPS or similar cases to make sure
 	 * we use the right interface in the Composite device
