@@ -101,7 +101,7 @@ static int execute_and_retrieve_query(char *query, char *reply)
 	int	ret;
 
 	ret = usb_control_msg(udev, STATUS_REQUESTTYPE, REQUEST_VALUE,
-		MESSAGE_VALUE, INDEX_VALUE, (usb_ctrl_char)query, QUERY_PACKETSIZE, 1000);
+		MESSAGE_VALUE, INDEX_VALUE, (usb_ctrl_charbuf)query, QUERY_PACKETSIZE, 1000);
 
 	if (ret <= 0) {
 		upsdebugx(3, "send: %s",
@@ -127,7 +127,7 @@ static int execute_and_retrieve_query(char *query, char *reply)
 	}
 	upsdebug_hex(3, "send", query, (size_t)ret);
 
-	ret = usb_interrupt_read(udev, REPLY_REQUESTTYPE, (usb_ctrl_char)reply, REPLY_PACKETSIZE, 1000);
+	ret = usb_interrupt_read(udev, REPLY_REQUESTTYPE, (usb_ctrl_charbuf)reply, REPLY_PACKETSIZE, 1000);
 
 	if (ret <= 0) {
 		upsdebugx(3, "read: %s",
@@ -399,7 +399,7 @@ static int usb_device_open(usb_dev_handle **handlep, USBDevice_t *device, USBDev
 			if (iManufacturer) {
 				char	buf[SMALLBUF];
 				ret = usb_get_string_simple(handle, iManufacturer,
-					(usb_ctrl_char)buf, sizeof(buf));
+					(usb_ctrl_charbuf)buf, sizeof(buf));
 				if (ret > 0) {
 					device->Vendor = strdup(buf);
 				}
@@ -408,7 +408,7 @@ static int usb_device_open(usb_dev_handle **handlep, USBDevice_t *device, USBDev
 			if (iProduct) {
 				char	buf[SMALLBUF];
 				ret = usb_get_string_simple(handle, iProduct,
-					(usb_ctrl_char)buf, sizeof(buf));
+					(usb_ctrl_charbuf)buf, sizeof(buf));
 				if (ret > 0) {
 					device->Product = strdup(buf);
 				}
@@ -417,7 +417,7 @@ static int usb_device_open(usb_dev_handle **handlep, USBDevice_t *device, USBDev
 			if (iSerialNumber) {
 				char	buf[SMALLBUF];
 				ret = usb_get_string_simple(handle, iSerialNumber,
-					(usb_ctrl_char)buf, sizeof(buf));
+					(usb_ctrl_charbuf)buf, sizeof(buf));
 				if (ret > 0) {
 					device->Serial = strdup(buf);
 				}
