@@ -54,7 +54,8 @@ typedef struct usb_communication_subdriver_s {
 	int (*open)(libusb_device_handle **sdevp,	/* try to open the next available	*/
 		USBDevice_t *curDevice,		/* device matching USBDeviceMatcher_t	*/
 		USBDeviceMatcher_t *matcher,
-		int (*callback)(libusb_device_handle *udev, USBDevice_t *hd, unsigned char *rdbuf, int rdlen));
+		int (*callback)(libusb_device_handle *udev, USBDevice_t *hd,
+			unsigned char *rdbuf, int rdlen));
 
 	void (*close)(libusb_device_handle *sdev);
 
