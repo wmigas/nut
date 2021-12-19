@@ -52,25 +52,26 @@ typedef struct usb_communication_subdriver_s {
 	const char *name;				/* name of this subdriver		*/
 	const char *version;			/* version of this subdriver		*/
 
-	int (*open)(libusb_device_handle **sdevp,	/* try to open the next available	*/
+	int (*open)(usb_dev_handle **sdevp,	/* try to open the next available	*/
 		USBDevice_t *curDevice,		/* device matching USBDeviceMatcher_t	*/
 		USBDeviceMatcher_t *matcher,
-		int (*callback)(libusb_device_handle *udev, USBDevice_t *hd,
-			unsigned char *rdbuf, int rdlen));
+		int (*callback)(usb_dev_handle *udev, USBDevice_t *hd,
+			usb_ctrl_charbuf rdbuf, usb_ctrl_charbufsize rdlen));
 
-	void (*close)(libusb_device_handle *sdev);
+	void (*close)(usb_dev_handle *sdev);
 
-	int (*get_report)(libusb_device_handle *sdev, int ReportId,
-		unsigned char *raw_buf, int ReportSize );
+	int (*get_report)(usb_dev_handle *sdev, usb_ctrl_repindex ReportId,
+		usb_ctrl_charbuf raw_buf, usb_ctrl_charbufsize ReportSize);
 
-	int (*set_report)(libusb_device_handle *sdev, int ReportId,
-		unsigned char *raw_buf, int ReportSize );
+	int (*set_report)(usb_dev_handle *sdev, usb_ctrl_repindex ReportId,
+		usb_ctrl_charbuf raw_buf, usb_ctrl_charbufsize ReportSize);
 
-	int (*get_string)(libusb_device_handle *sdev,
-		int StringIdx, char *buf, size_t buflen);
+	int (*get_string)(usb_dev_handle *sdev,
+		usb_ctrl_strindex StringIdx, char *buf, usb_ctrl_charbufsize buflen);
 
-	int (*get_interrupt)(libusb_device_handle *sdev,
-		unsigned char *buf, int bufsize, int timeout);
+	int (*get_interrupt)(usb_dev_handle *sdev,
+		usb_ctrl_charbuf buf, usb_ctrl_charbufsize bufsize,
+		usb_ctrl_timeout_msec timeout);
 
 	/* Used for Powervar UPS or similar cases to make sure
 	 * we use the right interface in the Composite device.

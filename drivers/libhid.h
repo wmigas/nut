@@ -40,13 +40,13 @@
 	#include "libshut.h"
 	typedef SHUTDevice_t                   HIDDevice_t;
 	typedef char                           HIDDeviceMatcher_t;
-	typedef int                            hid_dev_handle_t;
+	typedef usb_dev_handle                 hid_dev_handle_t;
 	typedef shut_communication_subdriver_t communication_subdriver_t;
 #else
 	#include "nut_libusb.h" /* includes usb-common.h */
 	typedef USBDevice_t                   HIDDevice_t;
 	typedef USBDeviceMatcher_t            HIDDeviceMatcher_t;
-	typedef libusb_device_handle *        hid_dev_handle_t;
+	typedef usb_dev_handle *              hid_dev_handle_t;
 	typedef usb_communication_subdriver_t communication_subdriver_t;
 #endif
 
