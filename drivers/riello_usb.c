@@ -34,7 +34,7 @@
 #include "riello.h"
 
 #define DRIVER_NAME	"Riello USB driver"
-#define DRIVER_VERSION	"0.04"
+#define DRIVER_VERSION	"0.05"
 
 /* driver description structure */
 upsdrv_info_t upsdrv_info = {
@@ -168,6 +168,7 @@ static int Get_USB_Packet(uint8_t *buffer)
 	char inBuf[10];
 	int err, ep;
 	size_t size;
+	/*int errno;*/
 
 	/* note: this function stop until some byte(s) is not arrived */
 	size = 8;
@@ -359,28 +360,28 @@ static int riello_command(uint8_t *cmd, uint8_t *buf, uint16_t length, uint16_t 
 
 	switch (ret)
 	{
-	case ERROR_BUSY:		/* Device or resource busy */
+	case ERROR_BUSY:			/* Device or resource busy */
 		fatal_with_errno(EXIT_FAILURE, "Got disconnected by another driver");
 #ifndef HAVE___ATTRIBUTE__NORETURN
 		exit(EXIT_FAILURE);	/* Should not get here in practice, but compiler is afraid we can fall through */
 #endif
 
 #if WITH_LIBUSB_0_1 /* limit to libusb 0.1 implementation */
-	case -EPERM:		/* Operation not permitted */
+	case -EPERM:				/* Operation not permitted */
 		fatal_with_errno(EXIT_FAILURE, "Permissions problem");
 # ifndef HAVE___ATTRIBUTE__NORETURN
 		exit(EXIT_FAILURE);	/* Should not get here in practice, but compiler is afraid we can fall through */
 # endif
 #endif
 
-	case ERROR_PIPE:		/* Broken pipe */
+	case ERROR_PIPE:			/* Broken pipe */
 		if (usb_clear_halt(udev, 0x81) == 0) {
 			upsdebugx(1, "Stall condition cleared");
 			break;
 		}
 #if ETIME && WITH_LIBUSB_0_1
 		goto fallthrough_case_etime;
-	case -ETIME:		/* Timer expired */
+	case -ETIME:				/* Timer expired */
 	fallthrough_case_etime:
 #endif
 		if (usb_reset(udev) == 0) {
@@ -391,7 +392,7 @@ static int riello_command(uint8_t *cmd, uint8_t *buf, uint16_t length, uint16_t 
 	case ERROR_ACCESS:			/* Permission denied */
 	case ERROR_IO:				/* I/O error */
 #if WITH_LIBUSB_0_1 /* limit to libusb 0.1 implementation */
-	case -ENXIO:		/* No such device or address */
+	case -ENXIO:				/* No such device or address */
 #endif
 	case ERROR_NOT_FOUND:		/* No such file or directory */
 	fallthrough_case_reconnect:

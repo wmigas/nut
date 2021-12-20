@@ -11,7 +11,7 @@
 #include <unistd.h>
 
 #define SUBDRIVER_NAME    "USB communication subdriver"
-#define SUBDRIVER_VERSION "0.23"
+#define SUBDRIVER_VERSION "0.26"
 
 /* communication driver description structure */
 upsdrv_info_t comm_upsdrv_info = {
@@ -43,10 +43,12 @@ void nutusb_comm_fail(const char *fmt, ...)
 	__attribute__ ((__format__ (__printf__, 1, 2)));
 void nutusb_comm_good(void);
 /* function pointer, set depending on which device is used */
+/* FIXME? Use usb_ctrl_* typedefs*/
 static int (*usb_set_descriptor)(usb_dev_handle *udev, unsigned char type,
 	unsigned char index, void *buf, size_t size);
 
 /* usb_set_descriptor() for Powerware devices */
+/* FIXME? Use usb_ctrl_* typedefs*/
 static int usb_set_powerware(usb_dev_handle *udev, unsigned char type, unsigned char index, void *buf, size_t size)
 {
 	assert (size < INT_MAX);
@@ -60,6 +62,7 @@ static void *powerware_ups(USBDevice_t *device) {
 }
 
 /* usb_set_descriptor() for Phoenixtec devices */
+/* FIXME? Use usb_ctrl_* typedefs*/
 static int usb_set_phoenixtec(usb_dev_handle *udev, unsigned char type, unsigned char index, void *buf, size_t size)
 {
 	NUT_UNUSED_VARIABLE(index);
@@ -355,6 +358,11 @@ void upsdrv_cleanup(void)
 {
 	upslogx(LOG_ERR, "CLOSING\n");
 	nutusb_close(upsdev, "USB");
+	free(curDevice.Vendor);
+	free(curDevice.Product);
+	free(curDevice.Serial);
+	free(curDevice.Bus);
+	free(curDevice.Device);
 }
 
 void upsdrv_reconnect(void)
@@ -411,7 +419,11 @@ static usb_dev_handle *open_powerware_usb(void)
 		curDevice.VendorID = dev_desc.idVendor;
 		curDevice.ProductID = dev_desc.idProduct;
 		bus = libusb_get_bus_number(device);
-		curDevice.Bus = (char *)xmalloc(4);
+		curDevice.Bus = (char *)malloc(4);
+		if (curDevice.Bus == NULL) {
+			libusb_free_device_list(devlist, 1);
+			fatal_with_errno(EXIT_FAILURE, "Out of memory");
+		}
 		sprintf(curDevice.Bus, "%03d", bus);
 
 		/* FIXME: we should also retrieve
@@ -423,9 +435,11 @@ static usb_dev_handle *open_powerware_usb(void)
 
 		if (is_usb_device_supported(pw_usb_device_table, &curDevice) == SUPPORTED) {
 			libusb_open(device, &udev);
+			libusb_free_device_list(devlist, 1);
 			return udev;
 		}
 	}
+	libusb_free_device_list(devlist, 1);
 #else /* not WITH_LIBUSB_1_0 */
 	struct usb_bus *busses = usb_get_busses();
 	struct usb_bus *bus;
@@ -442,7 +456,7 @@ static usb_dev_handle *open_powerware_usb(void)
 
 			curDevice.VendorID = dev->descriptor.idVendor;
 			curDevice.ProductID = dev->descriptor.idProduct;
-			curDevice.Bus = strdup(bus->dirname);
+			curDevice.Bus = xstrdup(bus->dirname);
 
 			/* FIXME: we should also retrieve
 			 * dev->descriptor.iManufacturer
