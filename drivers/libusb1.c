@@ -4,7 +4,7 @@
  *
  * @author Copyright (C) 2016 Eaton
  *         Copyright (C) 2016 Arnaud Quette <aquette.dev@gmail.com>
- *         Copyright (C) 2031 Jim Klimov <jimklimov+nut@gmail.com>
+ *         Copyright (C) 2021 Jim Klimov <jimklimov+nut@gmail.com>
  *
  *      The logic of this file is ripped from mge-shut driver (also from
  *      Arnaud Quette), which is a "HID over serial link" UPS driver for
