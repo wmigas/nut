@@ -3664,8 +3664,8 @@ int	qx_process(item_t *item, const char *command)
 		if (len < 0 || len > INT_MAX) {
 			upsdebugx(4, "%s: failed to preprocess answer [%s]",
 				__func__, item->info_type);
-			/* Clear answer, preventing it from being reused
-			 * by next items with same command */
+			/* Clear the failed answer, preventing it from
+			 * being reused by next items with same command */
 			memset(item->answer, 0, sizeof(item->answer));
 			free (cmd);
 			return -1;
