@@ -32,6 +32,7 @@ extern "C" {
 /* *INDENT-ON* */
 #endif /* __cplusplus */
 
+#include "config.h"
 #include "hidtypes.h"
 
 /* Include "usb-common.h" or "libshut.h" as appropriate, to define the 
