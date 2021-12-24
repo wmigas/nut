@@ -208,6 +208,7 @@ typedef struct {
 	const char *(*format_model)(HIDDevice_t *hd);  /* driver-specific methods */
 	const char *(*format_mfr)(HIDDevice_t *hd);    /* for preparing human-    */
 	const char *(*format_serial)(HIDDevice_t *hd); /* readable information    */
+	void (*fix_report)(HIDDesc_t *pDesc); /* fix report issues */
 } subdriver_t;
 
 /* the following functions are exported for the benefit of subdrivers */

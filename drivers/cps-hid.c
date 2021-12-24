@@ -262,6 +262,36 @@ static int cps_claim(HIDDevice_t *hd) {
 	}
 }
 
+//static void cps_fix_report(HIDDesc_t *pDesc) {/* fix report issues */
+//    for (size_t i = 0; i < pDesc->nitems; i++) {
+//        HIDData_t *pData = &pDesc->item[i];
+//        if (pData->ReportID == 18) {
+//            pData->LogMin = 170;//@todo: add support for USA AC (120V), current value works for EU 230V
+//        }
+//    }
+//}
+static void cps_fix_report(HIDDesc_t *pDesc) {/* fix report issues */
+    char *path;
+    size_t outputVoltageIdx, inputHighVoltageTransfer = 0;
+    for (size_t i = 0; i < pDesc->nitems; i++) {
+        path = HIDGetDataItem(&pDesc->item[i], cps_utab);
+        if (strcmp(path, "UPS.Output.Voltage") == 0) {
+            outputVoltageIdx = i;
+        } else if (strcmp(path, "UPS.Input.HighVoltageTransfer")) {
+            inputHighVoltageTransfer = i;
+        }
+    }
+    if (outputVoltageIdx != 0 && inputHighVoltageTransfer != 0) {
+        HIDData_t *pData = &pDesc->item[outputVoltageIdx];
+        upsdebugx(2, "Before FIX Path: %s, Type: %s, ReportID: 0x%02x, Offset: %i, Size: %i, LogMin: %ld, LogMax: %ld",
+              HIDGetDataItem(pData, cps_utab), HIDDataType(pData), pData->ReportID, pData->Offset, pData->Size, pData->LogMin, pData->LogMax);
+        pData->LogMin = 0;
+        pData->LogMax = 1 << pData->Size;
+        upsdebugx(2, "After FIX Path: %s, Type: %s, ReportID: 0x%02x, Offset: %i, Size: %i, LogMin: %ld, LogMax: %ld",
+                  HIDGetDataItem(pData, cps_utab), HIDDataType(pData), pData->ReportID, pData->Offset, pData->Size, pData->LogMin, pData->LogMax);
+    }
+}
+
 subdriver_t cps_subdriver = {
 	CPS_HID_VERSION,
 	cps_claim,
@@ -270,4 +300,5 @@ subdriver_t cps_subdriver = {
 	cps_format_model,
 	cps_format_mfr,
 	cps_format_serial,
+    cps_fix_report,
 };

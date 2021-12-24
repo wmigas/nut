@@ -1130,15 +1130,6 @@ static int callback(hid_dev_handle_t argudev, HIDDevice_t *arghd, unsigned char 
 		return 0;
 	}
 
-	/* prepare report buffer */
-	free_report_buffer(reportbuf);
-	reportbuf = new_report_buffer(pDesc);
-	if (!reportbuf) {
-		upsdebug_with_errno(1, "Failed to allocate report buffer!");
-		Free_ReportDesc(pDesc);
-		return 0;
-	}
-
 	/* select the subdriver for this device */
 	for (i=0; subdriver_list[i] != NULL; i++) {
 		if (subdriver_list[i]->claim(hd)) {
@@ -1152,6 +1143,19 @@ static int callback(hid_dev_handle_t argudev, HIDDevice_t *arghd, unsigned char 
 		return 0;
 	}
 
+    if (subdriver->fix_report != NULL) {
+        upsdebugx(1, "fixing report");
+        subdriver->fix_report(pDesc);
+    }
+
+    /* prepare report buffer */
+	free_report_buffer(reportbuf);
+	reportbuf = new_report_buffer(pDesc);
+	if (!reportbuf) {
+		upsdebug_with_errno(1, "Failed to allocate report buffer!");
+		Free_ReportDesc(pDesc);
+		return 0;
+	}
 	upslogx(2, "Using subdriver: %s", subdriver->name);
 
 	HIDDumpTree(udev, subdriver->utab);

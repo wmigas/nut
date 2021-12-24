@@ -98,7 +98,9 @@ static int RunBuiltInTests(char *argv[]) {
 		{.buf = "16 0c 00 00 00", .Offset = 7, .Size = 1, .LogMin = 0, .LogMax = 1, .expectedValue =  0},
 		{.buf = "16 0c 00 00 00", .Offset = 8, .Size = 1, .LogMin = 0, .LogMax = 1, .expectedValue =  0},
 		{.buf = "16 0c 00 00 00", .Offset = 9, .Size = 1, .LogMin = 0, .LogMax = 1, .expectedValue =  0},
-		{.buf = "16 0c 00 00 00", .Offset = 10, .Size = 1, .LogMin = 0, .LogMax = 1, .expectedValue =  0}
+		{.buf = "16 0c 00 00 00", .Offset = 10, .Size = 1, .LogMin = 0, .LogMax = 1, .expectedValue =  0},
+        {.buf = "12 ea 00", .Offset = 0, .Size = 16, .LogMin = 260, .LogMax = 270, .expectedValue = 260},
+
 	};
 
 	for (i = 0; i < sizeof(testData)/sizeof(testData[0]); i++) {
